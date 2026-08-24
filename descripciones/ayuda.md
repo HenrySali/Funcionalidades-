@@ -14,14 +14,19 @@ Página de documentación completa del sistema SmartTemp, pensada como material 
 - **Contenido formateado**: tablas, bloques de código, listas, y diagramas de flujo explicativos.
 
 ### Contenido documentado
-- **Introducción al sistema**: qué es SmartTemp, arquitectura general, componentes.
-- **Guía de operador**: cómo usar el monitoreo en vivo, interpretar alertas, registrar supervisiones.
-- **Guía de administrador**: cómo gestionar sensores, equipos, usuarios, sectores.
-- **Referencia API del simulador**: documentación de endpoints REST para el simulador virtual de sensores.
-- **Sistema de calibración**: procedimiento para calibrar sensores con patrón de referencia, generar certificados.
-- **Configuración remota**: cómo cambiar intervalos y umbrales de sensores desde la interfaz.
-- **Firma digital**: cómo subir una firma para los certificados de calibración.
-- **Exportación de datos**: cómo generar reportes PDF y Excel desde el historial.
+La Capacitación del sitio en vivo es extensa y cubre tanto el uso como los aspectos técnicos profundos del sistema:
+
+- **Ajustes de Usuarios, Equipos y Sensores**: guías de gestión (ver [gestion.md](gestion.md)).
+- **Estado de Sensor y Gráfica del Sensor**: monitoreo en vivo e histórico (ver [monitoreo.md](monitoreo.md)).
+- **Visualización**: historial de conexión y consola de eventos.
+- **Diagnóstico**: guía de las pestañas técnicas (ver [sistema.md](sistema.md)).
+- **Hardware ESP8266**: conexiones, firmware, MQTT y troubleshooting (ver [hardware.md](hardware.md)).
+- **Simulador de sensores**: API REST y firmware virtual (ver [simulador.md](simulador.md)).
+- **Calibración ISO 17025**: patrón, estadísticas metrológicas y certificados (ver [calibracion.md](calibracion.md)).
+- **Sistema de eventos y desconexiones**: detección, falsos positivos y timeouts (ver [eventos-desconexiones.md](eventos-desconexiones.md)).
+- **Configuración remota**: flujo MQTT/ACK e historial (ver [configuracion-remota.md](configuracion-remota.md)).
+- **Historial de cambios del sistema**: registro de los 62 ajustes exitosos aplicados.
+- **Problemas conocidos y pendientes**: bugs, specs parciales y funcionalidades no implementadas.
 
 ### Características de la página
 - Diseño responsive (funciona en celular, tablet, PC).
