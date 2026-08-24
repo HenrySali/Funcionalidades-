@@ -14,7 +14,7 @@ ABM (Alta/Baja/Modificación) de sensores y su asociación a equipos.
 - **Panel de asociaciones**: relación sensor ↔ equipo actual.
 
 ### Funcionalidades
-- **Registrar sensor**: el sistema auto-detecta sensores nuevos que envían datos. Desde esta pantalla se les asigna nombre, descripción, tipo y ubicación para formalizarlos.
+- **Registrar sensor**: el sistema auto-detecta sensores nuevos que envían datos. Desde esta pantalla se les asigna nombre, descripción, tipo (DS18B20, PT100, etc.) y ubicación para formalizarlos.
 - **Filtrar por ID**: búsqueda rápida para encontrar un sensor específico entre los detectados.
 - **Crear equipo**: registrar un nuevo equipo (freezer, heladera, cámara fría, incubadora, etc.).
 - **Asociar sensor a equipo**: vincular un sensor registrado a un equipo específico.
@@ -31,6 +31,8 @@ Al asociar un sensor a un equipo que pertenece a un sector, los usuarios de ese 
 ## 2. Equipos (`equipos/index.html`)
 
 Gestión avanzada de equipos, direcciones MAC y sectores organizacionales.
+
+> ⚠️ **A confirmar:** la asociación MAC → Equipo figura en esta documentación pero no aparece en la sección de Capacitación del sitio en vivo. Revisar si sigue vigente.
 
 ### Qué muestra
 - **Formulario de equipo**: nombre, descripción, tipo, ubicación, MAC address opcional.
@@ -51,13 +53,19 @@ Gestión avanzada de equipos, direcciones MAC y sectores organizacionales.
 Gestión de usuarios del sistema, roles y asignación a sectores.
 
 ### Qué muestra
-- **Formulario de creación**: nombre, correo, contraseña, rol (administrador/coordinador/operador/visualizador).
+- **Formulario de creación**: nombre, correo, contraseña, rol, y opcionalmente departamento/área y teléfono.
 - **Lista de usuarios**: búsqueda por nombre.
 - **Formulario de sector**: crear nuevos sectores.
 - **Asociación usuario-sector**: vincular un usuario a un sector para controlar qué sensores puede ver.
 - **Consulta por sector**: ver todos los usuarios asignados a un sector específico.
+- **Visualización masiva**: botón "Mostrar Sectores y Usuarios" que abre un modal con toda la estructura organizacional y búsqueda global.
 
 ### Roles disponibles
+> ⚠️ **A confirmar:** existe una discrepancia entre la documentación y el sitio en vivo sobre los roles vigentes.
+>
+> - **Documentación previa (4 roles):** Administrador, Coordinador, Operador, Visualizador.
+> - **Sitio en vivo / Capacitación (3 roles):** Administrador, Usuario Regular, Técnico.
+
 | Rol | Acceso |
 |-----|--------|
 | Administrador | Todo el sistema |

@@ -6,7 +6,9 @@ Sección técnica para administradores. Diagnóstico del servidor, configuració
 
 ## 1. Estado del Sistema (`diagnostico/index.html`)
 
-Panel de diagnóstico completo con 9 pestañas que cubren todos los aspectos técnicos del sistema.
+Panel de diagnóstico completo con pestañas que cubren todos los aspectos técnicos del sistema. Las pestañas tienen persistencia en `localStorage`.
+
+> ⚠️ **A confirmar:** número de pestañas. Esta documentación describe **9** pestañas (incluye "Historial Config" y "Contingencia"), mientras que la sección de Capacitación del sitio en vivo describe **7** (Estado, Servidor y Red, Sensores, Configuración, Herramientas, Logs, Simulador). Revisar cuáles están realmente activas.
 
 ### Pestañas
 
