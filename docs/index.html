@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartTemp — Documentación del Sistema</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --surface:#ffffff; --surface-2:#eef2f7; --text:#1f2933;
+    --muted:#5c6b7a; --primary:#0f766e; --primary-2:#14b8a6; --accent:#2563eb;
+    --border:#dbe3ec; --code-bg:#0f172a; --code-text:#e2e8f0; --warn-bg:#fff7ed;
+    --warn-border:#fdba74; --tip-bg:#ecfdf5; --tip-border:#6ee7b7; --simple-bg:#eff6ff;
+    --simple-border:#93c5fd; --shadow:0 1px 3px rgba(0,0,0,.08),0 6px 20px rgba(0,0,0,.04);
+  }
+  html[data-theme="dark"]{
+    --bg:#0b1220; --surface:#111a2b; --surface-2:#0f1728; --text:#e6edf5;
+    --muted:#9fb0c3; --primary:#2dd4bf; --primary-2:#14b8a6; --accent:#60a5fa;
+    --border:#22304a; --code-bg:#060b16; --code-text:#dbe7f5; --warn-bg:#2a1c0d;
+    --warn-border:#b45309; --tip-bg:#0c231c; --tip-border:#0f766e; --simple-bg:#0d1c33;
+    --simple-border:#1d4ed8; --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 26px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* Layout */
+  .layout{display:flex;min-height:100vh}
+  .sidebar{width:290px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);
+    position:sticky;top:0;height:100vh;overflow-y:auto;padding:0}
+  .brand{padding:22px 22px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:2}
+  .brand .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.25rem}
+  .brand .dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 20%,transparent)}
+  .brand .sub{color:var(--muted);font-size:.8rem;margin-top:4px}
+  nav{padding:14px 12px 60px}
+  nav .group{color:var(--muted);text-transform:uppercase;font-size:.7rem;letter-spacing:.08em;margin:16px 10px 6px;font-weight:700}
+  nav a{display:block;padding:8px 12px;border-radius:8px;color:var(--text);font-size:.92rem;margin:2px 0}
+  nav a:hover{background:var(--surface-2);text-decoration:none}
+  nav a.active{background:color-mix(in srgb,var(--primary) 16%,transparent);color:var(--primary);font-weight:600}
+
+  /* Content */
+  .content{flex:1;min-width:0;max-width:960px;margin:0 auto;padding:36px 40px 120px}
+  header.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 14%,var(--surface)),var(--surface));
+    border:1px solid var(--border);border-radius:18px;padding:34px 32px;margin-bottom:34px;box-shadow:var(--shadow)}
+  header.hero h1{margin:0 0 6px;font-size:2rem;letter-spacing:-.02em}
+  header.hero p{margin:0;color:var(--muted);font-size:1.05rem}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .pill{background:var(--surface-2);border:1px solid var(--border);border-radius:999px;padding:5px 12px;font-size:.8rem;color:var(--muted)}
+
+  section{margin-bottom:44px;scroll-margin-top:20px}
+  section h2{font-size:1.5rem;border-bottom:2px solid var(--border);padding-bottom:8px;margin:0 0 6px;letter-spacing:-.01em}
+  section h3{font-size:1.15rem;margin:26px 0 8px;color:var(--primary)}
+  section h4{font-size:1rem;margin:18px 0 6px}
+  .lead{color:var(--muted);margin-top:2px}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin:16px 0;box-shadow:var(--shadow)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:16px 0}
+  .grid .card{margin:0}
+  .card .ico{font-size:1.4rem}
+  .card h4{margin:8px 0 4px}
+  .card p{margin:0;color:var(--muted);font-size:.92rem}
+
+  .callout{border-radius:12px;padding:12px 16px;margin:14px 0;border:1px solid;font-size:.94rem}
+  .callout .tag{font-weight:700;display:block;margin-bottom:2px;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em}
+  .simple{background:var(--simple-bg);border-color:var(--simple-border)}
+  .simple .tag{color:var(--accent)}
+  .tip{background:var(--tip-bg);border-color:var(--tip-border)}
+  .tip .tag{color:var(--primary)}
+  .warn{background:var(--warn-bg);border-color:var(--warn-border)}
+  .warn .tag{color:#c2620a}
+  html[data-theme="dark"] .warn .tag{color:#fbbf24}
+
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;overflow:hidden;border-radius:10px;border:1px solid var(--border)}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border)}
+  th{background:var(--surface-2);font-weight:700}
+  tr:last-child td{border-bottom:none}
+  code{background:var(--surface-2);padding:2px 6px;border-radius:6px;font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:.86em}
+  pre{background:var(--code-bg);color:var(--code-text);padding:16px 18px;border-radius:12px;overflow-x:auto;font-size:.85rem;line-height:1.55}
+  pre code{background:none;padding:0;color:inherit}
+  ul.clean{list-style:none;padding-left:0}
+  ul.clean li{padding:6px 0 6px 26px;position:relative}
+  ul.clean li::before{content:"▸";position:absolute;left:6px;color:var(--primary);font-weight:700}
+  .flow{counter-reset:step;list-style:none;padding-left:0}
+  .flow li{position:relative;padding:10px 0 10px 46px;margin:0}
+  .flow li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:8px;width:30px;height:30px;
+    background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem}
+
+  /* Topbar (mobile) */
+  .topbar{display:none;position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;align-items:center;justify-content:space-between}
+  .btn{background:var(--surface-2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:8px 12px;cursor:pointer;font-size:.9rem}
+  .theme-toggle{position:fixed;bottom:22px;right:22px;z-index:30;border-radius:50%;width:50px;height:50px;font-size:1.3rem;
+    background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer}
+  footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--border);padding-top:20px;margin-top:40px}
+
+  @media(max-width:900px){
+    .sidebar{position:fixed;left:0;top:0;transform:translateX(-100%);transition:transform .25s ease;z-index:40;box-shadow:var(--shadow)}
+    .sidebar.open{transform:translateX(0)}
+    .topbar{display:flex}
+    .content{padding:22px 18px 100px}
+    header.hero{padding:24px 20px}
+    .backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:35}
+    .backdrop.show{display:block}
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="btn" id="menuBtn">☰ Menú</button>
+  <strong>SmartTemp</strong>
+  <span></span>
+</div>
+<div class="backdrop" id="backdrop"></div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo"><span class="dot"></span> SmartTemp</div>
+      <div class="sub">Sistema de Monitoreo de Temperatura</div>
+    </div>
+    <nav id="nav">
+      <div class="group">Inicio</div>
+      <a href="#intro">¿Qué es SmartTemp?</a>
+      <a href="#arquitectura">Arquitectura</a>
+      <a href="#como-funciona">Cómo funciona (el viaje del dato)</a>
+      <div class="group">Uso del sistema</div>
+      <a href="#monitoreo">Monitoreo en vivo</a>
+      <a href="#graficos">Gráficos e historial</a>
+      <a href="#visualizacion">Visualización y eventos</a>
+      <a href="#gestion">Gestión (usuarios, equipos, sensores)</a>
+      <a href="#reportes">Reportes y auditoría</a>
+      <a href="#sistema">Diagnóstico y notificaciones</a>
+      <div class="group">Parte técnica</div>
+      <a href="#hardware">Hardware (ESP8266)</a>
+      <a href="#config-remota">Configuración remota</a>
+      <a href="#eventos">Detección de desconexiones</a>
+      <a href="#calibracion">Calibración ISO 17025</a>
+      <a href="#simulador">Simulador</a>
+      <div class="group">Referencia</div>
+      <a href="#roles">Roles y permisos</a>
+      <a href="#glosario">Glosario</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <header class="hero">
+      <h1>Documentación del Sistema SmartTemp</h1>
+      <p>Una guía completa del sistema de monitoreo de temperatura en tiempo real: qué hace, cómo se usa y cómo funciona por dentro. Escrita con detalle técnico, pero explicada para que cualquier persona la entienda.</p>
+      <div class="pills">
+        <span class="pill">🌡️ Monitoreo en tiempo real</span>
+        <span class="pill">📶 Sensores IoT (ESP8266)</span>
+        <span class="pill">📐 Calibración ISO 17025</span>
+        <span class="pill">🔔 Alertas por Email y WhatsApp</span>
+        <span class="pill">📊 Trazabilidad y auditoría</span>
+      </div>
+    </header>
+
+    <!-- INTRO -->
+    <section id="intro">
+      <h2>¿Qué es SmartTemp?</h2>
+      <p class="lead">Una plataforma que vigila la temperatura de equipos de frío las 24 horas y avisa cuando algo se sale de lo normal.</p>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Imaginá una farmacia, un laboratorio o un depósito con muchas heladeras y freezers donde se guardan vacunas, medicamentos o alimentos. Si una heladera se calienta de más, el contenido puede echarse a perder. SmartTemp es como un <strong>vigilante electrónico</strong> que mide la temperatura de cada equipo todo el tiempo, la anota, y llama la atención (por correo o WhatsApp) apenas algo se sale de rango.
+      </div>
+      <p>Técnicamente, SmartTemp es un sistema de monitoreo de temperatura orientado a la <strong>cadena de frío</strong> y al <strong>cumplimiento normativo</strong> (normas como ISO 17025 y Buenas Prácticas de Laboratorio). Combina sensores físicos, un servidor central, una base de datos y una interfaz web. Está pensado para tres tipos de usuarios: quienes operan día a día, quienes coordinan y auditan, y quienes administran la infraestructura.</p>
+      <div class="grid">
+        <div class="card"><div class="ico">🌡️</div><h4>Mide</h4><p>Sensores en cada equipo toman la temperatura (y el voltaje de su batería) cada pocos minutos.</p></div>
+        <div class="card"><div class="ico">📡</div><h4>Transmite</h4><p>Los datos viajan por WiFi hasta un servidor central usando un protocolo liviano (MQTT).</p></div>
+        <div class="card"><div class="ico">💾</div><h4>Registra</h4><p>Todo queda guardado con fecha y hora para consultar el historial y auditar.</p></div>
+        <div class="card"><div class="ico">🔔</div><h4>Alerta</h4><p>Si un valor se sale de los límites, avisa al instante por email o WhatsApp.</p></div>
+      </div>
+    </section>
+
+    <!-- ARQUITECTURA -->
+    <section id="arquitectura">
+      <h2>Arquitectura general</h2>
+      <p class="lead">Las piezas que forman el sistema y cómo se conectan.</p>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Pensalo como una cadena: unos <strong>aparatitos</strong> en las heladeras miden y mandan datos → un <strong>cartero</strong> (MQTT) lleva esos datos → un <strong>cerebro</strong> (el servidor) los procesa y guarda → y una <strong>pantalla</strong> (la web) te lo muestra y te avisa.
+      </div>
+      <table>
+        <tr><th>Pieza</th><th>Qué es</th><th>Para qué sirve</th></tr>
+        <tr><td><strong>Sensores</strong></td><td>Módulos ESP8266 + sonda DS18B20 (o PT100)</td><td>Miden temperatura y voltaje en cada equipo</td></tr>
+        <tr><td><strong>MQTT</strong></td><td>Protocolo de mensajería liviano (broker Mosquitto)</td><td>Transporta los datos de los sensores al servidor</td></tr>
+        <tr><td><strong>Servidor</strong></td><td>Aplicación Node.js detrás de Nginx</td><td>Procesa, valida, guarda y decide cuándo alertar</td></tr>
+        <tr><td><strong>Base de datos</strong></td><td>Motor SQL con pool de conexiones</td><td>Almacena mediciones, eventos, configuración e historial</td></tr>
+        <tr><td><strong>Interfaz web</strong></td><td>HTML/CSS/JS (Chart.js, jsPDF, SheetJS)</td><td>Donde el usuario ve datos, gráficos y configura</td></tr>
+        <tr><td><strong>WebSocket</strong></td><td>Canal en vivo entre servidor y navegador</td><td>Actualiza la pantalla al instante, sin recargar</td></tr>
+        <tr><td><strong>Notificaciones</strong></td><td>Email (Nodemailer/Gmail) y WhatsApp (Meta/Twilio)</td><td>Envían las alertas a las personas</td></tr>
+      </table>
+      <div class="callout tip">
+        <span class="tag">Dato clave</span>
+        Hay <strong>dos canales de comunicación distintos</strong>: <strong>MQTT</strong> conecta a los sensores con el servidor (máquina ↔ máquina), y <strong>WebSocket</strong> conecta al servidor con tu navegador (servidor ↔ persona). Por eso la pantalla se actualiza sola cuando llega un dato nuevo.
+      </div>
+    </section>
+
+    <!-- COMO FUNCIONA -->
+    <section id="como-funciona">
+      <h2>Cómo funciona: el viaje de un dato</h2>
+      <p class="lead">Seguimos una sola medición desde la heladera hasta tu pantalla.</p>
+      <ol class="flow">
+        <li>El sensor DS18B20 dentro del equipo mide la temperatura y el ESP8266 lee también el voltaje de su batería.</li>
+        <li>El ESP8266 arma un pequeño mensaje en formato JSON y lo publica por WiFi en el tópico MQTT <code>sensores/datos</code>.</li>
+        <li>El servidor, que está suscripto a ese tópico, recibe el mensaje, lo valida y lo guarda en la base de datos con su fecha y hora.</li>
+        <li>El servidor revisa: ¿la temperatura o el voltaje están fuera de los umbrales configurados? ¿El sensor dejó de responder?</li>
+        <li>Si todo está bien, empuja el dato a los navegadores conectados por WebSocket y la tabla se actualiza al instante.</li>
+        <li>Si algo está mal, además registra un evento, puede pedir supervisión y envía una alerta por email o WhatsApp.</li>
+      </ol>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Todo esto ocurre en segundos y de forma automática. La persona no tiene que estar mirando: el sistema la busca a ella cuando hay un problema.
+      </div>
+    </section>
+
+    <!-- MONITOREO -->
+    <section id="monitoreo">
+      <h2>Monitoreo en vivo</h2>
+      <p class="lead">La pantalla principal del día a día. Muestra el estado actual de todos los sensores.</p>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Es como el tablero de un auto, pero para todas las heladeras a la vez: de un vistazo ves cuáles están bien (verde) y cuáles tienen un problema (rojo).
+      </div>
+      <h3>Qué se ve en pantalla</h3>
+      <ul class="clean">
+        <li><strong>Barra de estadísticas:</strong> total de sensores, en línea, con alertas, desconectados y última actualización.</li>
+        <li><strong>Tabla de sensores:</strong> por cada uno: ID, nombre, equipo, sector, temperatura, voltaje, umbrales (°C y V), fecha/hora y acciones.</li>
+        <li><strong>Alertas visuales:</strong> los sensores fuera de límite se pintan de rojo/naranja con íconos de advertencia.</li>
+        <li><strong>Monitores de estado:</strong> un LED de conexión WebSocket, un monitor del servidor (verde=OK, celeste/naranja=reconectando, rojo=caído) y un monitor del servicio de compresión de datos.</li>
+      </ul>
+      <h3>Qué se puede hacer</h3>
+      <div class="grid">
+        <div class="card"><h4>🔎 Filtrar</h4><p>Por sensor, por equipo o por sector para encontrar lo que buscás.</p></div>
+        <div class="card"><h4>🎚️ Ajustar umbrales</h4><p>Definir temperatura mínima/máxima y voltaje mínimo/máximo de cada sensor, y un valor de corrección.</p></div>
+        <div class="card"><h4>📝 Supervisar</h4><p>Ante una alerta, registrar por escrito qué se hizo (queda como evidencia).</p></div>
+        <div class="card"><h4>📶 Ping MQTT</h4><p>Verificar en el momento si el sensor realmente responde.</p></div>
+        <div class="card"><h4>⚙️ Configurar</h4><p>Cambiar el intervalo de envío, el umbral de voltaje o el modo, sin tocar el equipo.</p></div>
+        <div class="card"><h4>🌙 Comodidad</h4><p>Modo compacto para tablets en campo y modo nocturno para uso de noche.</p></div>
+      </div>
+      <div class="callout tip">
+        <span class="tag">Ajuste de umbrales, ¿para qué?</span>
+        Los <strong>umbrales</strong> son los límites de lo que se considera "normal". Por ejemplo, una vacuna que debe conservarse entre 2 °C y 8 °C tendría umbral mínimo 2 y máximo 8. Si la temperatura los cruza, el sistema lo marca como alerta. El <strong>valor de corrección</strong> ajusta pequeñas desviaciones propias del sensor (ver Calibración).
+      </div>
+      <div class="callout warn">
+        <span class="tag">Dato técnico importante</span>
+        Un valor de temperatura igual a <code>0.1111</code> no es una temperatura real: es un <strong>valor centinela</strong> que el sistema usa internamente para marcar que un sensor está desconectado.
+      </div>
+    </section>
+
+    <!-- GRAFICOS -->
+    <section id="graficos">
+      <h2>Gráficos e historial (Gráfica del Sensor)</h2>
+      <p class="lead">Ver cómo evolucionó la temperatura y el voltaje en el tiempo.</p>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Si el monitoreo en vivo es "cómo está ahora", esto es "cómo estuvo antes": un gráfico de líneas que muestra la historia, útil para detectar patrones o justificar que todo estuvo en regla.
+      </div>
+      <ul class="clean">
+        <li><strong>Gráfico interactivo</strong> (Chart.js) con zoom, desplazamiento y líneas de umbral marcadas.</li>
+        <li><strong>Rangos rápidos:</strong> 1h, 6h, 24h, 7d, 30d, o un rango personalizado por fecha/hora.</li>
+        <li><strong>Estadísticas:</strong> temperatura mínima, máxima, promedio, voltaje promedio y cantidad de registros.</li>
+        <li><strong>Exportación:</strong> a PDF (gráfico + tabla) y a Excel (.xlsx) con todos los datos del rango.</li>
+        <li><strong>Auto-refresh</strong> configurable y modo oscuro.</li>
+      </ul>
+      <div class="callout warn">
+        <span class="tag">A confirmar</span>
+        Existe una diferencia de nombres a revisar: los gráficos corresponden a la página "Gráfica del Sensor", mientras que la página <code>visualizacion/index.html</code> es otra cosa (ver la sección siguiente).
+      </div>
+    </section>
+
+    <!-- VISUALIZACION -->
+    <section id="visualizacion">
+      <h2>Visualización y consola de eventos</h2>
+      <p class="lead">Seguimiento de la conectividad y de los sucesos de cada sensor.</p>
+      <ul class="clean">
+        <li><strong>Historial de conexión:</strong> cada vez que un sensor se conectó o desconectó, con filtros por fecha, nombre, ID y sector.</li>
+        <li><strong>Consola de eventos:</strong> una terminal que muestra los sucesos de todos los sensores casi en vivo (se actualiza cada 5 segundos).</li>
+        <li><strong>Columna de diagnóstico</strong> con formato visual (borde rojo/verde) según el tipo de evento.</li>
+      </ul>
+      <div class="callout warn">
+        <span class="tag">A confirmar</span>
+        El sistema reporta un problema conocido: esta página actualmente no estaría cargando datos.
+      </div>
+    </section>
+
+    <!-- GESTION -->
+    <section id="gestion">
+      <h2>Gestión: usuarios, equipos y sensores</h2>
+      <p class="lead">La parte administrativa donde se define la estructura del sistema.</p>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Antes de vigilar, hay que decirle al sistema qué heladeras existen, qué sensores tiene cada una, cómo se agrupan y quién puede verlas. Eso se hace acá.
+      </div>
+
+      <h3>Configurar sensores</h3>
+      <ul class="clean">
+        <li>El sistema <strong>detecta solo</strong> los sensores nuevos que empiezan a mandar datos; desde acá se les pone nombre, tipo (DS18B20, PT100…) y ubicación para formalizarlos.</li>
+        <li>Se los <strong>asocia a un equipo</strong> (freezer, heladera, cámara fría, incubadora…).</li>
+        <li>Búsqueda por ID y edición/eliminación.</li>
+      </ul>
+
+      <h3>Equipos y sectores</h3>
+      <ul class="clean">
+        <li>Alta/baja/modificación de equipos con nombre, descripción, tipo y ubicación.</li>
+        <li>Creación de <strong>sectores</strong> (áreas organizacionales) con un color identificativo.</li>
+        <li>Asociación de equipos a sectores.</li>
+      </ul>
+      <div class="callout warn">
+        <span class="tag">A confirmar</span>
+        La asociación de una dirección MAC (identificador del hardware) a un equipo figura en la documentación pero no aparece en la guía del sitio; revisar si sigue vigente.
+      </div>
+
+      <h3>Usuarios</h3>
+      <ul class="clean">
+        <li>Creación de usuarios con nombre, correo, contraseña, rol y, opcionalmente, departamento y teléfono.</li>
+        <li>Asignación de usuarios a uno o más sectores: <strong>el sector define qué sensores puede ver cada persona</strong>.</li>
+        <li>Vista masiva de toda la estructura organizacional en un modal con búsqueda.</li>
+      </ul>
+      <div class="callout tip">
+        <span class="tag">La cadena de permisos</span>
+        <code>Sensor → Equipo → Sector → Usuario</code>. Al asociar un sensor a un equipo de un sector, todos los usuarios de ese sector pasan a ver sus datos automáticamente.
+      </div>
+
+      <h3>Red de sensores</h3>
+      <p>Diagnóstico de conectividad: tarjetas con sensores online/offline y ping promedio, y una tabla por sensor con IP, MAC, estado, modo (continuo o deep sleep), ping MQTT y última conexión. Permite hacer ping individual y refrescar el estado.</p>
+    </section>
+
+    <!-- REPORTES -->
+    <section id="reportes">
+      <h2>Reportes y auditoría</h2>
+      <p class="lead">La memoria del sistema: todo lo que pasa queda registrado para poder demostrarlo.</p>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Si mañana alguien pregunta "¿esta vacuna se mantuvo siempre fría?" o "¿quién entró al sistema el martes?", acá está la respuesta documentada.
+      </div>
+      <div class="grid">
+        <div class="card"><h4>📋 Auditoría de eventos</h4><p>Registro cronológico de novedades: desconexiones, reconexiones, valores fuera de umbral, cambios de configuración, correos enviados. Con filtros por fecha, tipo, sensor y usuario.</p></div>
+        <div class="card"><h4>👁️ Supervisiones</h4><p>Cada vez que un operador atiende una alerta, escribe qué hizo. Esas observaciones quedan como evidencia, con estado resuelto/pendiente.</p></div>
+        <div class="card"><h4>🔐 Registro de sesiones</h4><p>Quién inició sesión, cuándo, desde qué IP y con qué dispositivo. Útil para auditorías de seguridad.</p></div>
+      </div>
+      <div class="callout tip">
+        <span class="tag">¿Por qué importa?</span>
+        Normas como <strong>ISO 17025</strong> o las Buenas Prácticas de Laboratorio exigen poder demostrar que las desviaciones se detectaron y se atendieron. Esta sección es la que permite pasar una auditoría.
+      </div>
+    </section>
+
+    <!-- SISTEMA -->
+    <section id="sistema">
+      <h2>Diagnóstico y notificaciones</h2>
+      <p class="lead">Herramientas técnicas para administradores.</p>
+
+      <h3>Estado del sistema (Diagnóstico)</h3>
+      <p>Un panel con pestañas que cubren la salud técnica del sistema: estado general, servidor y red, sensores, configuración, herramientas, logs y el simulador. Las pestañas recuerdan tu última elección.</p>
+      <div class="callout warn">
+        <span class="tag">A confirmar</span>
+        El número de pestañas difiere entre fuentes: la documentación describe <strong>9</strong> (incluyendo "Historial Config" y "Contingencia") y la guía del sitio describe <strong>7</strong>. Revisar cuáles están activas.
+      </div>
+
+      <h3>Notificaciones (Email y WhatsApp)</h3>
+      <ul class="clean">
+        <li>Interruptores globales para activar/desactivar cada canal (email, WhatsApp).</li>
+        <li>Elegir qué eventos disparan un mensaje (desconexión, temperatura, voltaje, reconexión).</li>
+        <li>Preferencias por usuario: quién recibe qué y por qué medio.</li>
+        <li>Historial de notificaciones y prueba de envío.</li>
+      </ul>
+      <table>
+        <tr><th>Canal</th><th>Proveedor</th></tr>
+        <tr><td>Email</td><td>Nodemailer con Gmail (App Password)</td></tr>
+        <tr><td>WhatsApp</td><td>Meta Cloud API (oficial) o Twilio</td></tr>
+      </table>
+    </section>
+
+    <!-- HARDWARE -->
+    <section id="hardware">
+      <h2>Hardware: el sensor ESP8266</h2>
+      <p class="lead">El aparatito físico que vive dentro de cada equipo.</p>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Es una plaquita chiquita con WiFi (ESP8266) conectada a un termómetro digital (DS18B20). Cada cierto tiempo mide, se conecta al WiFi y manda el dato. Puede funcionar enchufada o a batería.
+      </div>
+      <h3>Componentes</h3>
+      <ul class="clean">
+        <li><strong>ESP8266</strong> (NodeMCU): el "cerebro" con WiFi.</li>
+        <li><strong>DS18B20</strong>: la sonda que mide temperatura.</li>
+        <li><strong>Resistencia 4.7 kΩ</strong>: necesaria para que la sonda comunique bien (pull-up).</li>
+      </ul>
+      <h3>Formato del dato que envía</h3>
+      <pre><code>{
+  "sensor_id": "28FF1A2B3C4D5E60",
+  "temperature": 22.5,
+  "voltage": 4.2,
+  "module_ip": "192.168.1.100",
+  "timestamp": 1692876543000
+}</code></pre>
+      <h3>Modos de operación</h3>
+      <table>
+        <tr><th>Modo</th><th>Qué hace</th><th>Cuándo conviene</th></tr>
+        <tr><td><strong>Continuo</strong></td><td>Siempre encendido, WiFi y MQTT permanentes</td><td>Equipos con alimentación de red</td></tr>
+        <tr><td><strong>Deep Sleep</strong></td><td>Duerme entre mediciones para ahorrar batería; se conecta solo al enviar</td><td>Sensores a batería</td></tr>
+      </table>
+      <div class="callout tip">
+        <span class="tag">¿Cómo elige el modo?</span>
+        Automáticamente, comparando el voltaje de la batería con un umbral configurado. Si hay poca energía, entra en Deep Sleep para durar más.
+      </div>
+      <h3>Servidor web propio del sensor</h3>
+      <p>Cada módulo expone páginas para verlo o configurarlo: <code>/</code> (principal), <code>/status</code> (estado JSON) y <code>/config</code> (protegida). Si no logra conectarse al WiFi, crea su propia red <code>SmartTemp_Config</code> para reconfigurarlo.</p>
+    </section>
+
+    <!-- CONFIG REMOTA -->
+    <section id="config-remota">
+      <h2>Configuración remota</h2>
+      <p class="lead">Cambiar cómo se comporta un sensor sin ir físicamente hasta él.</p>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Desde la web podés decirle a un sensor "medí cada 5 minutos" o "cambiá tu umbral de batería", y el cambio le llega por el aire. El sensor confirma que lo aplicó.
+      </div>
+      <ol class="flow">
+        <li>El usuario envía la nueva configuración desde la interfaz.</li>
+        <li>El servidor la publica por MQTT en el tópico del sensor (con la opción <code>retain</code>, para que no se pierda).</li>
+        <li>El sensor la recibe, la aplica y devuelve una confirmación (ACK).</li>
+        <li>El servidor anota la fecha de confirmación en la base de datos.</li>
+      </ol>
+      <table>
+        <tr><th>Parámetro</th><th>Qué controla</th></tr>
+        <tr><td><code>realtime_interval</code></td><td>Cada cuánto mide en modo continuo</td></tr>
+        <tr><td><code>sleep_interval</code></td><td>Cada cuánto mide en modo deep sleep</td></tr>
+        <tr><td><code>voltage_threshold</code></td><td>Umbral de voltaje para cambiar de modo</td></tr>
+        <tr><td><code>sensor_mode</code></td><td>Modo actual (continuo / deep sleep)</td></tr>
+      </table>
+      <div class="callout tip">
+        <span class="tag">Reenvío automático</span>
+        Si un sensor manda datos sin haber confirmado una configuración pendiente, el servidor se la reenvía solo (con un límite para no saturar). Además, todos los cambios quedan en un historial.
+      </div>
+    </section>
+
+    <!-- EVENTOS -->
+    <section id="eventos">
+      <h2>Detección de desconexiones</h2>
+      <p class="lead">Cómo el sistema se da cuenta de que un sensor "se cayó" — sin dar falsas alarmas.</p>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Un sensor puede dejar de mandar datos por muchos motivos (se fue el WiFi un segundo, estaba durmiendo, se desconectó de verdad). El sistema no quiere avisar por error, así que primero verifica antes de alarmar.
+      </div>
+      <ol class="flow">
+        <li>El sistema nota que un sensor no envía datos dentro del tiempo esperado.</li>
+        <li>Registra un evento y le manda una orden de reinicio por MQTT.</li>
+        <li>Espera 1 minuto a ver si responde.</li>
+        <li>Si responde → fue un <strong>falso positivo</strong>: no se alarma. Si no responde → <strong>desconexión confirmada</strong>: guarda el centinela <code>0.1111</code> y envía el correo.</li>
+      </ol>
+      <div class="callout tip">
+        <span class="tag">Tiempos inteligentes</span>
+        El tiempo de espera depende del modo: un sensor en Deep Sleep puede tardar mucho más en reportar (hasta ~65 min), así que el sistema no lo da por caído tan rápido como a uno en modo continuo.
+      </div>
+    </section>
+
+    <!-- CALIBRACION -->
+    <section id="calibracion">
+      <h2>Calibración ISO 17025</h2>
+      <p class="lead">Asegurar que lo que mide el sensor es confiable, y poder demostrarlo con un certificado.</p>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Ningún termómetro es perfecto: uno puede marcar 4 °C cuando en realidad son 4.2 °C. Calibrar es comparar el sensor contra un termómetro "patrón" muy exacto para conocer y corregir esa diferencia. El sistema hace las cuentas y emite un certificado oficial.
+      </div>
+      <p>Se ingresan los datos del <strong>patrón de referencia</strong> y del <strong>responsable</strong>, y se cargan 3 mediciones (patrón vs sensor). El sistema calcula automáticamente las estadísticas metrológicas:</p>
+      <table>
+        <tr><th>Estadística</th><th>Qué significa (en simple)</th></tr>
+        <tr><td>Error promedio</td><td>Cuánto se desvía el sensor, en promedio</td></tr>
+        <tr><td>Corrección</td><td>Cuánto hay que sumarle/restarle para acertar</td></tr>
+        <tr><td>Desviación estándar</td><td>Qué tan dispersas fueron las mediciones</td></tr>
+        <tr><td>Incertidumbre (A, combinada, expandida k=2)</td><td>El margen de duda de la medición, con 95% de confianza</td></tr>
+      </table>
+      <p>Con eso se genera un <strong>certificado PDF</strong> con número único (<code>CAL-YYYYMMDD-NNNN</code>), datos del instrumento y del patrón, la tabla de mediciones, la declaración de conformidad y la firma digital del responsable. Se pueden generar individualmente o todos juntos en un ZIP.</p>
+      <div class="callout warn">
+        <span class="tag">A futuro</span>
+        Está planificada una <strong>calibración masiva automática</strong> (cada sensor con su propio patrón PT100 integrado), pero depende de hardware adicional que aún no está instalado.
+      </div>
+    </section>
+
+    <!-- SIMULADOR -->
+    <section id="simulador">
+      <h2>Simulador de sensores</h2>
+      <p class="lead">Sensores "de mentira" para probar el sistema sin hardware real.</p>
+      <div class="callout simple">
+        <span class="tag">En simple</span>
+        Es un programa que imita a un sensor real: manda datos como si fuera uno físico. Sirve para hacer demos, capacitar gente y probar el sistema sin tener que comprar y conectar aparatos.
+      </div>
+      <ul class="clean">
+        <li>Corre dentro del servidor (no en el navegador), así que sigue funcionando aunque cierres la web.</li>
+        <li>Simula tipos DS18B20 y PT100, en modo continuo o deep sleep.</li>
+        <li>Permite simular fallas: apagar el WiFi, generar una medición errónea, acumular datos y enviarlos juntos al reconectar.</li>
+        <li>Usa MQTT real, exactamente igual que un sensor físico, y se controla por una API REST.</li>
+      </ul>
+      <div class="callout tip">
+        <span class="tag">Detalle fino</span>
+        El simulador es una "traducción" del programa (firmware) del sensor real, escrita en JavaScript módulo por módulo, para que se comporte igual que el hardware.
+      </div>
+    </section>
+
+    <!-- ROLES -->
+    <section id="roles">
+      <h2>Roles y permisos</h2>
+      <p class="lead">Cada persona ve y hace solo lo que le corresponde.</p>
+      <div class="callout warn">
+        <span class="tag">A confirmar</span>
+        Hay una discrepancia sobre los roles vigentes que conviene aclarar con el equipo:
+      </div>
+      <table>
+        <tr><th>Documentación (4 roles)</th><th>Acceso</th></tr>
+        <tr><td>Administrador</td><td>Todo el sistema</td></tr>
+        <tr><td>Coordinador</td><td>Monitoreo + Reportes</td></tr>
+        <tr><td>Operador</td><td>Monitoreo en vivo + Historial</td></tr>
+        <tr><td>Visualizador</td><td>Solo monitoreo en vivo</td></tr>
+      </table>
+      <table>
+        <tr><th>Sitio en vivo (3 roles)</th></tr>
+        <tr><td>Administrador</td></tr>
+        <tr><td>Usuario Regular</td></tr>
+        <tr><td>Técnico</td></tr>
+      </table>
+    </section>
+
+    <!-- GLOSARIO -->
+    <section id="glosario">
+      <h2>Glosario</h2>
+      <p class="lead">Los términos técnicos, explicados en una línea.</p>
+      <table>
+        <tr><th>Término</th><th>Qué es</th></tr>
+        <tr><td><strong>ESP8266</strong></td><td>Microchip con WiFi que actúa de "cerebro" del sensor.</td></tr>
+        <tr><td><strong>DS18B20 / PT100</strong></td><td>Sondas que miden temperatura (la segunda soporta rangos más amplios).</td></tr>
+        <tr><td><strong>MQTT</strong></td><td>Protocolo de mensajería liviano para que dispositivos manden datos. Como un servicio de mensajería para máquinas.</td></tr>
+        <tr><td><strong>Broker (Mosquitto)</strong></td><td>El "cartero" central que recibe y reparte los mensajes MQTT.</td></tr>
+        <tr><td><strong>WebSocket</strong></td><td>Conexión en vivo entre el servidor y tu navegador; permite actualizar la pantalla sin recargar.</td></tr>
+        <tr><td><strong>Umbral</strong></td><td>Límite de lo que se considera normal (mínimo y máximo).</td></tr>
+        <tr><td><strong>Deep Sleep</strong></td><td>Modo de ahorro donde el sensor "duerme" entre mediciones para durar más con batería.</td></tr>
+        <tr><td><strong>ACK</strong></td><td>Confirmación de que un mensaje (una configuración) fue recibido y aplicado.</td></tr>
+        <tr><td><strong>Calibración</strong></td><td>Comparar el sensor con un patrón exacto para conocer y corregir su error.</td></tr>
+        <tr><td><strong>Trazabilidad</strong></td><td>Poder reconstruir qué pasó, cuándo y quién lo hizo, con evidencia.</td></tr>
+        <tr><td><strong>Valor 0.1111</strong></td><td>Marca interna que indica "sensor desconectado" (no es una temperatura real).</td></tr>
+        <tr><td><strong>ISO 17025</strong></td><td>Norma internacional sobre la competencia de laboratorios de ensayo y calibración.</td></tr>
+      </table>
+    </section>
+
+    <footer>
+      <p>Documentación del sistema <strong>SmartTemp</strong> — Sistema de Monitoreo de Temperatura. Generada a partir de la documentación funcional y de la capacitación integrada del sistema. Los apartados marcados como <em>"A confirmar"</em> requieren validación del equipo.</p>
+    </footer>
+  </main>
+</div>
+
+<button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌙</button>
+
+<script>
+  // Theme
+  var root=document.documentElement, tBtn=document.getElementById('themeToggle');
+  var saved=localStorage.getItem('st-theme');
+  if(saved){root.setAttribute('data-theme',saved);}
+  else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){root.setAttribute('data-theme','dark');}
+  function syncIcon(){tBtn.textContent = root.getAttribute('data-theme')==='dark' ? '☀️' : '🌙';}
+  syncIcon();
+  tBtn.addEventListener('click',function(){
+    var next = root.getAttribute('data-theme')==='dark' ? 'light':'dark';
+    root.setAttribute('data-theme',next); localStorage.setItem('st-theme',next); syncIcon();
+  });
+
+  // Mobile menu
+  var sb=document.getElementById('sidebar'), bd=document.getElementById('backdrop'), mb=document.getElementById('menuBtn');
+  function openMenu(){sb.classList.add('open');bd.classList.add('show');}
+  function closeMenu(){sb.classList.remove('open');bd.classList.remove('show');}
+  mb.addEventListener('click',openMenu); bd.addEventListener('click',closeMenu);
+
+  // Active link on scroll + close menu on click
+  var links=[].slice.call(document.querySelectorAll('#nav a'));
+  var sections=links.map(function(a){return document.querySelector(a.getAttribute('href'));}).filter(Boolean);
+  links.forEach(function(a){a.addEventListener('click',function(){if(window.innerWidth<=900)closeMenu();});});
+  function onScroll(){
+    var y=window.scrollY+120, current=null;
+    sections.forEach(function(s){ if(s.offsetTop<=y) current=s.id; });
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href')==='#'+current); });
+  }
+  window.addEventListener('scroll',onScroll); onScroll();
+</script>
+</body>
+</html>

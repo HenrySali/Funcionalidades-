@@ -12,6 +12,12 @@ Documentación funcional y técnica del sistema **SmartTemp**, una plataforma de
 - **Hardware:** módulos ESP8266 + sensor DS18B20 (o PT100).
 - **Notificaciones:** Email (Nodemailer/Gmail) y WhatsApp (Meta Cloud API o Twilio).
 
+## 🌐 Sitio de documentación
+
+Hay una página web completa y autocontenida que explica todo el sistema con lenguaje técnico pero entendible: **[`docs/index.html`](docs/index.html)**.
+
+Para publicarla con **GitHub Pages**: *Settings → Pages → Source: Deploy from a branch → Branch: `main` / carpeta `/docs`*. Quedará accesible en `https://henrysali.github.io/Funcionalidades-/`.
+
 ## Índice de la documentación
 
 ### Uso del sistema
